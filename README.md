@@ -72,3 +72,15 @@ O projeto utiliza uma estética **Torre OSI** com:
 
 ---
 
+## 🔄 Fluxo de Dados Ilustrado
+[Usuário digita] → [Camada Aplicação] → [Objeto JSON + Criptografia] → [localStorage] → [Camada Apresentação] → [Exibição na Tela]
+
+---
+
+## ✅ Conclusão
+
+Este projeto demonstra na prática como as camadas de **Aplicação** e **Apresentação** do modelo OSI atuam em conjunto para processar e preparar dados para transmissão. A interface visual neon reforça o conceito de "camadas" e torna o aprendizado mais imersivo e divertido.
+
+**Desenvolvido por Maria Letícia** 
+
+🚀 *Entrega parcial – Camada de Apresentação concluída*
