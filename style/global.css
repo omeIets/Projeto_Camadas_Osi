@@ -2,12 +2,22 @@ html {
   font-family: "Poppins", sans-serif;
   font-weight: 400;
   font-style: normal;
+  background-color: #0b0719;
+  color: #e3e0b3;
 }
 
-iframe {
-  color: #079ea6;
-  color: #1e0c42;
-  color: #f0077b;
-  color: #f5be58;
-  color: #e3e0b3;
+body {
+  overflow-x: hidden;
+  background: radial-gradient(circle at 50% 10%, #1e0c42 0%, #0b0719 70%);
+  min-height: 100vh;
+}
+
+:root {
+  --neon-cyan: #00e5ff;
+  --neon-pink: #f0077b;
+  --neon-yellow: #f5be58;
+  --bg-dark: #0b0719;
+  --bg-layer: #141028;
+  --neon-glow-cyan: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
+  --neon-glow-pink: 0 0 10px #f0077b, 0 0 20px #f0077b;
 }

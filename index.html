@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
   <meta charset="UTF-8">
@@ -8,32 +8,95 @@
   <link rel="stylesheet" href="./style/global.css">
   <link rel="stylesheet" href="./style/header.css">
   <link rel="stylesheet" href="./style/main.css">
+  
+  <!-- Fontes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Audiowide&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-    rel="stylesheet">
-  <title>Modelo OSI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+  
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <title>Torre OSI - Maria Letícia</title>
 </head>
 
 <body>
   <header class="head">
-    <img class="osi-img" src="./assets/osi-icon.webp" alt="">
-    <p class="title">Projeto Redes - Modelo OSI</p>
-    <p class="user"></p>
+    <div class="user-wrapper">
+      <i class="fa-solid fa-user-astronaut icon"></i>
+      <p class="user" id="userNameDisplay">Carregando...</p>
+    </div>
+    <h1 class="title">TORRE OSI</h1>
+    <div class="status-led"></div>
   </header>
-  <main class="main">
-    <div class="request-wrapper">
-      <input class="text-input" type="text">
-      <button class="request-btn">Realizar Requisição</button>
-      <input type="file" name="file" id="arquivo">
-    </div>
-    <div class="protocol-name-wrapper">
-      <h1 class="protocol-name"></h1>
-    </div>
-  </main>
-  
-  <script src="./scripts/application.js"></script>
-</body>
 
+  <main class="main">
+    <!-- Fundo da Cidade Cyberpunk -->
+    <div class="city-bg"></div>
+
+    <!-- Torre -->
+    <div class="tower-container">
+      <!-- Camada 7 (Aplicação) - Visor -->
+      <div class="layer layer-top">
+        <div class="display-screen">
+          <div class="screen-header">
+            <span class="sys-status">SISTEMA &gt; CONECTADO</span>
+            <i class="fa-solid fa-circle-check green-dot"></i>
+          </div>
+          <h1 class="protocol-name" id="protocolDisplay">AGUARDANDO REQUISIÇÃO...</h1>
+          <div class="scanline"></div>
+        </div>
+      </div>
+                <!-- ===== CAMADA DE APRESENTAÇÃO ===== -->
+      <section id="camada-apresentacao" class="presentation-layer">
+        <h2>📡 Camada de Apresentação</h2>
+        <div id="display-criptografado" class="display-cripto">
+          <p class="placeholder">Aguardando dados da camada de aplicação...</p>
+        </div>
+      </section>
+
+      <!-- Camadas Intermediárias (Decoração) -->
+      <div class="layer layer-mid-1">
+        <i class="fa-solid fa-network-wired neon-icon"></i>
+        <i class="fa-solid fa-lock neon-icon"></i>
+        <i class="fa-solid fa-globe neon-icon"></i>
+      </div>
+      
+      <div class="layer layer-mid-2">
+        <i class="fa-solid fa-shield-halved neon-icon-pink"></i>
+        <i class="fa-solid fa-server neon-icon-pink"></i>
+      </div>
+
+      <!-- Camada Base (Painel de Controle) -->
+      <div class="layer layer-base">
+        <div class="control-panel">
+          <div class="row-inputs">
+            <div class="input-group">
+              <label>CMD &gt; DIGITE A URL/EMAIL:</label>
+              <div class="input-container">
+                <input type="text" id="requestInput" class="text-input glow-input" placeholder="www.site.com ou email@teste.com">
+                <button class="request-btn glow-btn">
+                  <i class="fa-solid fa-arrow-right-to-bracket"></i> EXECUTAR
+                </button>
+              </div>
+            </div>
+            <div class="file-upload-wrapper">
+              <label for="arquivo" class="custom-file-upload">
+                <i class="fa-solid fa-upload"></i> ANEXAR ARQUIVO
+                <input type="file" id="arquivo">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+
+    <!-- Linhas de energia -->
+    <div class="energy-lines"></div>
+  </main>
+
+  <!-- Script único -->
+  <script type="module" src="./scripts/OSI.js"></script>
+</body>
 </html>
