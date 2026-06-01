@@ -72,4 +72,3 @@ O projeto utiliza uma estética **Torre OSI** com:
 
 ---
 
-## 📂 Estrutura de Arquivos Relevantes
