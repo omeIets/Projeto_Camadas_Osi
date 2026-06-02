@@ -7,11 +7,6 @@ function executarCicloOSI() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Mostra o nome do usuário
-  const userElement = document.querySelector('#userNameDisplay');
-  if (userElement) {
-    userElement.textContent = `👤 maria.leticia`;
-  }
 
   // Remove dados antigos para começar limpo
   localStorage.removeItem('dadosApresentacao');

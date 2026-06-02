@@ -9,7 +9,7 @@ Este projeto simula o fluxo de dados entre as **Camadas de Aplicação (7)** e *
 | Camada | Função no Projeto |
 |--------|-------------------|
 | **Aplicação (7)** | O usuário interage pelo painel de controle, digitando uma URL/email ou anexando um arquivo. O sistema identifica o tipo de dado (Email, HTTP, Arquivo, Chat), cria um objeto estruturado (JSON) e aplica a **Cifra de César** nos campos sensíveis. Os dados são então salvos no `localStorage`. |
-| **Apresentação (6)** | A camada de apresentação lê os dados salvos no `localStorage`. Ela exibe o objeto JSON de forma legível e colorida, **omitindo o campo `hostIP`** (URL), conforme solicitado pelo professor. Todos os textos criptografados aparecem com caracteres deslocados (Cifra de César), representando a conversão de formato. |
+| **Apresentação (6)** | A camada de apresentação lê os dados salvos no `localStorage`. Ela exibe o objeto JSON de forma legível e colorida, **omitindo o campo `hostIP`** (URL). Todos os textos criptografados aparecem com caracteres deslocados (Cifra de César), representando a conversão de formato. |
 
 ---
 
@@ -28,7 +28,7 @@ Este projeto simula o fluxo de dados entre as **Camadas de Aplicação (7)** e *
      - Caso contrário → **WEBSOCKET** (Chat genérico)
 
 3. **Criação do Objeto JSON**  
-   - Para cada tipo, é criado um objeto específico (seguindo o modelo passado pelo professor):
+   - Para cada tipo, é criado um objeto específico:
      - *Email:* `remetente`, `destinatario`, `assunto`, `corpo`, etc.
      - *HTTP:* `metodo`, `hostIP`, `protocolo`, `usuario`, etc.
      - *Arquivo:* `nomeArquivo`, `formato`, `remetente`, etc.
@@ -43,22 +43,11 @@ Este projeto simula o fluxo de dados entre as **Camadas de Aplicação (7)** e *
    - O objeto JSON é salvo no **`localStorage`** do navegador. Isso simula a passagem dos dados entre as camadas (Aplicação → Apresentação).
 
 6. **Camada de Apresentação**  
-   - Ao clicar em **EXECUTAR** (ou ao recarregar a página se houver dados salvos), a camada de apresentação:
+   - Ao clicar em **EXECUTAR**, a camada de apresentação:
      - Lê os dados do `localStorage`.
      - Remove o campo `hostIP` (se existir).
      - Exibe o JSON de forma colorida e indentada dentro da área "Camada de Apresentação".
      - Mostra todos os campos criptografados, evidenciando a transformação dos dados.
-
----
-
-## 🎨 Interface Visual
-
-O projeto utiliza uma estética **Torre OSI** com:
-- Luzes **neon ciano** (Camada de Aplicação - topo)
-- Luzes **neon rosa** (Camada Base - controle)
-- Luzes **neon amarelo** (Camada de Apresentação)
-- Efeitos de **scanline** (linhas de varredura) no display holográfico
-- Ícones de rede (`globe`, `lock`, `shield`, `server`) representando as camadas inferiores do OSI
 
 ---
 

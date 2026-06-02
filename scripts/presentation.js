@@ -15,6 +15,22 @@ export function presentation() {
   try {
     const objeto = JSON.parse(dadosString);
     
+    // Converte o timestamp para data legível
+    if (objeto.timestamp) {
+    const data = new Date(objeto.timestamp);
+    // Formata como: DD/MM/AAAA HH:MM:SS
+    const dataFormatada = data.toLocaleString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+    });
+    // Substitui o timestamp original pela data formatada
+    objeto.timestamp = dataFormatada;
+    }
+
     // Omitir a URL (hostIP)
     if (objeto.hostIP) {
       delete objeto.hostIP;
