@@ -1,75 +1,131 @@
-# 🚀 Projeto Torre OSI - Camadas de Aplicação e Apresentação
+# 🌐 Torre OSI — Simulador do Modelo de 7 Camadas
 
-Este projeto simula o fluxo de dados entre as **Camadas de Aplicação (7)** e **Apresentação (6)** do Modelo OSI, utilizando uma interface visual futurista estilo "Cyberpunk/Neon". O foco é demonstrar como os dados são gerados, criptografados e preparados para transmissão.
-
----
-
-## 🧠 Conceitos Aplicados
-
-| Camada | Função no Projeto |
-|--------|-------------------|
-| **Aplicação (7)** | O usuário interage pelo painel de controle, digitando uma URL/email ou anexando um arquivo. O sistema identifica o tipo de dado (Email, HTTP, Arquivo, Chat), cria um objeto estruturado (JSON) e aplica a **Cifra de César** nos campos sensíveis. Os dados são então salvos no `localStorage`. |
-| **Apresentação (6)** | A camada de apresentação lê os dados salvos no `localStorage`. Ela exibe o objeto JSON de forma legível e colorida, **omitindo o campo `hostIP`** (URL). Todos os textos criptografados aparecem com caracteres deslocados (Cifra de César), representando a conversão de formato. |
+Interface visual futurista estilo **Cyberpunk/Neon** que simula o percurso completo de dados pelas **7 camadas do Modelo OSI**, desde a digitação do usuário até a animação do pacote trafegando por uma rede de 100 roteadores reais.
 
 ---
 
-## ⚙️ Como o Sistema Funciona (Passo a Passo)
+## 🧠 Camadas Implementadas
 
-1. **Entrada do Usuário**  
-   - Digita um texto no campo `CMD > DIGITE A URL/EMAIL:`  
-   - *Exemplos:* `www.google.com`, `email@teste.com`, `meu-site`  
-   - Ou anexa um arquivo pelo botão `ANEXAR ARQUIVO`
-
-2. **Identificação do Protocolo (Camada de Aplicação)**  
-   - O JavaScript analisa a entrada:
-     - Se contém `@` → **SMTP/POP3** (E-mail)
-     - Se contém `www` → **HTTP/HTTPS** (Site)
-     - Se é um arquivo → **FTP/HTTP** (Arquivo)
-     - Caso contrário → **WEBSOCKET** (Chat genérico)
-
-3. **Criação do Objeto JSON**  
-   - Para cada tipo, é criado um objeto específico:
-     - *Email:* `remetente`, `destinatario`, `assunto`, `corpo`, etc.
-     - *HTTP:* `metodo`, `hostIP`, `protocolo`, `usuario`, etc.
-     - *Arquivo:* `nomeArquivo`, `formato`, `remetente`, etc.
-     - *Chat:* `usuario`, `mensagem`, `protocolo`, etc.
-
-4. **Aplicação da Cifra de César (Criptografia Simples)**  
-   - Todos os campos de texto (ex: `assunto`, `corpo`, `nomeArquivo`, `mensagem`) são deslocados em **3 posições** no alfabeto.  
-   - *Exemplo:* `"Maria"` → `"Pduld"`  
-   - O campo `hostIP` (URL) **não** é criptografado, pois será omitido na exibição.
-
-5. **Armazenamento Temporário**  
-   - O objeto JSON é salvo no **`localStorage`** do navegador. Isso simula a passagem dos dados entre as camadas (Aplicação → Apresentação).
-
-6. **Camada de Apresentação**  
-   - Ao clicar em **EXECUTAR**, a camada de apresentação:
-     - Lê os dados do `localStorage`.
-     - Remove o campo `hostIP` (se existir).
-     - Exibe o JSON de forma colorida e indentada dentro da área "Camada de Apresentação".
-     - Mostra todos os campos criptografados, evidenciando a transformação dos dados.
+| # | Camada | Implementação |
+|---|--------|---------------|
+| 7 | **Aplicação** | Detecta protocolo pelo input (e-mail, URL, texto, arquivo). Exibe formulário específico por tipo. |
+| 6 | **Apresentação** | Encripta dados com **AES-GCM 256-bit** (Web Crypto API nativa). Gera chave e salva no `localStorage`. Assina **JWT HS256** com payload encriptado. Consulta **DNS Google** para resolver o IP do destino. |
+| 5 | **Sessão** | Cria `sessionId` único com `crypto.randomUUID()` e registra `inicioSessao`. |
+| 4 | **Transporte** | Monta objeto TCP com `packetId`, `protocoloTransporte: "TCP"`, `portaOrigem` efêmera e `portaDestino` por protocolo (SMTP→587, HTTPS→443, HTTP/WS→80, FTP→21). |
+| 3 | **Rede** | Algoritmo de Dijkstra sobre os 100 roteadores reais fornecidos pelo professor. Destino determinístico pelo IP resolvido no DNS. Retorna `networkObj` com `ipOrigem`, `ipDestino`, `rota`, `ttl`. |
+| 2 | **Enlace** | Quadro Ethernet IEEE 802.3 com `macOrigem` e `macDestino` derivados dinamicamente dos UUIDs da sessão, `EtherType: 0x0800` (IPv4), tamanho do quadro e `FCS` (CRC-32 simulado). |
+| 1 | **Física** | Converte o quadro inteiro para representação binária (bits). |
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## ⚙️ Como Funciona
 
-- **HTML5** – Estrutura da página e da Torre OSI
-- **CSS3** – Estilização neon, flexbox, responsividade
-- **JavaScript (ES6 Módulos)** – Lógica das camadas, Cifra de César, manipulação do DOM e `localStorage`
-- **Fontes:** `Audiowide` (títulos) e `Poppins` (textos)
-- **Ícones:** FontAwesome
+### 1. Identificação do Protocolo (Camada 7)
+
+Digite qualquer coisa no painel CMD e clique **EXECUTAR**:
+
+| Entrada | Protocolo | Formulário |
+|---------|-----------|------------|
+| `email@dominio.com` | 📧 SMTP/POP3 | E-mail com remetente, destinatário, assunto e corpo |
+| `www.site.com` / `https://` | 🌐 HTTP/HTTPS | Requisição web com método (GET/POST/PUT/DELETE) |
+| `ws://` / texto simples | 💬 WEBSOCKET | Chat com destinatário e mensagem |
+| Arquivo anexado | 📁 FTP/HTTP | Upload de arquivo |
+
+### 2. Pipeline das Camadas (Apresentação → Física)
+
+```
+Formulário enviado
+    │
+    ▼
+[Apresentação]  AES-GCM 256-bit (chave no localStorage)
+                JWT HS256 (secret hardcoded)
+                DNS Google (resolve IP real do destino)
+    │
+    ▼
+[Sessão]  sessionId = crypto.randomUUID()
+    │
+    ▼
+[Transporte]  packetId, TCP, portaOrigem efêmera, portaDestino por protocolo
+    │
+    ▼
+[Enlace]  Quadro Ethernet com MACs dinâmicos + FCS CRC-32
+    │
+    ▼
+[Física]  Representação em bits binários
+    │
+    ▼
+localStorage → resultado.html
+    │
+    ▼
+[Rede]  Dijkstra nos 100 roteadores → animação no canvas
+```
+
+### 3. Roteamento (Camada 3)
+
+- **Origem:** sempre `R1 (10.0.0.1)` — gateway local, igual para todos os protocolos
+- **Destino:** determinístico pelo IP real resolvido via DNS Google — mesma URL sempre roteia para o mesmo roteador
+- **Sem DNS** (chat/WebSocket): hash do nome do protocolo → destino fixo e consistente por tipo
+- Algoritmo **Dijkstra** com custo euclidiano entre coordenadas dos roteadores
+- Canvas animado: o pacote percorre a rota em tempo real com ~60fps
 
 ---
 
-## 🔄 Fluxo de Dados Ilustrado
-[Usuário digita] → [Camada Aplicação] → [Objeto JSON + Criptografia] → [localStorage] → [Camada Apresentação] → [Exibição na Tela]
+## 🗂️ Estrutura de Arquivos
+
+```
+projeto-modelo-osi/
+├── index.html              → Torre OSI (interface principal)
+├── resultado.html          → Exibe todas as camadas + canvas animado
+├── scripts/
+│   ├── application.js      → Detecção de protocolo, formulários, UI
+│   ├── apresentacao.js     → AES-GCM, JWT, DNS Google, orquestrador
+│   ├── sessao.js           → Session ID nativo
+│   ├── transporte.js       → TCP, portas, packet ID
+│   ├── enlace.js           → Quadro Ethernet IEEE 802.3 dinâmico
+│   ├── fisica.js           → Conversão para bits binários
+│   ├── network.js          → Dijkstra + networkObj (formato professor)
+│   ├── points.js           → 100 roteadores (IPs, coordenadas, conexões)
+│   ├── animation.js        → Canvas: rede + rota + animação do pacote
+│   └── resultado.js        → Renderiza todas as camadas na página resultado
+├── style/
+│   ├── reset.css
+│   ├── global.css
+│   ├── header.css
+│   ├── main.css
+│   └── resultado.css
+└── imagem/
+    ├── router-green.png    → Roteador ativo
+    ├── router-red.png      → Roteador inativo
+    └── packet.png          → Pacote animado
+```
 
 ---
 
-## ✅ Conclusão
+## 🔑 Segurança Aplicada
 
-Este projeto demonstra na prática como as camadas de **Aplicação** e **Apresentação** do modelo OSI atuam em conjunto para processar e preparar dados para transmissão. A interface visual neon reforça o conceito de "camadas" e torna o aprendizado mais imersivo e divertido.
+| Técnica | Onde |
+|---------|------|
+| **AES-GCM 256-bit** | Camada de Apresentação — encripta os dados antes do JWT |
+| **Chave AES no `localStorage`** | Gerada na primeira execução, reutilizada depois |
+| **JWT HS256** | Assinado com secret hardcoded (`'chave-teste'`) |
+| **IV aleatório** | Gerado a cada transmissão (96 bits via `getRandomValues`) |
+| **MACs derivados de UUID** | Enlace — rastreáveis mas únicos por sessão |
 
-**Desenvolvido por Maria Letícia** 
+---
 
-🚀 *Entrega parcial – Camada de Apresentação concluída*
+## 🚀 Como Executar
+
+```bash
+cd projeto-modelo-osi
+python -m http.server 8081
+```
+
+Acesse **http://localhost:8081** no navegador.
+
+> ⚠️ É necessário servir via HTTP (não abrir o arquivo diretamente) por causa dos módulos ES e da Web Crypto API.
+
+---
+
+## 👤 Autora
+
+**Maria Letícia** — Projeto de Redes de Computadores, IFPE

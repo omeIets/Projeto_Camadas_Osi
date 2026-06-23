@@ -310,3 +310,98 @@
 .tower-container > .presentation-layer {
   margin-top: 0;
 }
+
+/* ===== BOTÃO LOGOUT & HEADER RIGHT ===== */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--neon-pink);
+  color: var(--neon-pink);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  box-shadow: var(--neon-glow-pink);
+  background: rgba(240, 7, 123, 0.15);
+}
+
+/* ===== FORMULÁRIOS OSI (email, chat, site) ===== */
+.osi-form {
+  width: 100%;
+  max-width: 900px;
+  margin: 1.5rem auto 0;
+  padding: 2rem;
+  background: rgba(11, 7, 25, 0.95);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.osi-form.hidden {
+  display: none;
+}
+
+.form-title {
+  font-family: 'Audiowide', cursive;
+  font-size: 1.2rem;
+  color: var(--neon-cyan);
+  text-shadow: var(--neon-glow-cyan);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  color: var(--neon-pink);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.input-field {
+  background: #0b0719;
+  border: 1px solid var(--neon-cyan);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  transition: box-shadow 0.3s;
+}
+
+.input-field:focus {
+  box-shadow: 0 0 12px var(--neon-cyan);
+}
+
+.textarea-field {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+select.input-field option {
+  background: #141028;
+}

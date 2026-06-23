@@ -27,7 +27,10 @@
       <p class="user" id="userNameDisplay">Carregando...</p>
     </div>
     <h1 class="title">TORRE OSI</h1>
-    <div class="status-led"></div>
+    <div class="header-right">
+      <div class="status-led"></div>
+      <button id="btn-logout" class="logout-btn">Trocar Usuário</button>
+    </div>
   </header>
 
   <main class="main">
@@ -47,15 +50,8 @@
           <div class="scanline"></div>
         </div>
       </div>
-                <!-- ===== CAMADA DE APRESENTAÇÃO ===== -->
-      <section id="camada-apresentacao" class="presentation-layer">
-        <h2>📡 Camada de Apresentação</h2>
-        <div id="display-criptografado" class="display-cripto">
-          <p class="placeholder">Aguardando dados da camada de aplicação...</p>
-        </div>
-      </section>
 
-      <!-- Camadas Intermediárias (Decoração) -->
+
       <div class="layer layer-mid-1">
         <i class="fa-solid fa-network-wired neon-icon"></i>
         <i class="fa-solid fa-lock neon-icon"></i>
@@ -89,14 +85,85 @@
           </div>
         </div>
       </div>
-    
+
     </div>
+
+    <!-- ===== FORMULÁRIO DE E-MAIL (SMTP) ===== -->
+    <form class="email-form hidden osi-form">
+      <h2 class="form-title">📧 Simulador de Envio (SMTP)</h2>
+
+      <div class="form-group">
+        <label for="remetente">Remetente:</label>
+        <input type="email" id="remetente" class="input-field" placeholder="exemplo@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="destinatario">Destinatário:</label>
+        <input type="email" id="destinatario" class="input-field" placeholder="destino@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="assunto">Assunto:</label>
+        <input type="text" id="assunto" class="input-field" placeholder="Assunto do e-mail" required>
+      </div>
+
+      <div class="form-group">
+        <label for="corpo">Corpo da Mensagem:</label>
+        <textarea id="corpo" class="input-field textarea-field" placeholder="Digite sua mensagem..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="protocolo">Protocolo:</label>
+        <input type="text" id="protocolo" class="input-field" value="SMTP" readonly>
+      </div>
+
+      <button type="submit" class="request-btn glow-btn">Enviar E-mail</button>
+    </form>
+
+    <!-- ===== FORMULÁRIO DE CHAT (WebSocket) ===== -->
+    <form class="chat-form hidden osi-form">
+      <h2 class="form-title">💬 Simulador de Chat (WebSocket)</h2>
+
+      <div class="form-group">
+        <label for="chat-destinatario">Enviar para (Destinatário):</label>
+        <input type="text" id="chat-destinatario" class="input-field" placeholder="Nome do amigo ou grupo..." required>
+      </div>
+
+      <div class="form-group">
+        <label for="chat-mensagem">Mensagem do Chat:</label>
+        <textarea id="chat-mensagem" class="input-field textarea-field" placeholder="Digite a mensagem do chat..." required></textarea>
+      </div>
+
+      <button type="submit" class="request-btn glow-btn">Enviar Mensagem</button>
+    </form>
+
+    <!-- ===== FORMULÁRIO WEB (HTTP/HTTPS) ===== -->
+    <form class="site-form hidden osi-form">
+      <h2 class="form-title">🌐 Simulador de Requisição Web (HTTP/HTTPS)</h2>
+
+      <div class="form-group">
+        <label for="site-metodo">Método HTTP:</label>
+        <select id="site-metodo" class="input-field">
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="DELETE">DELETE</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="site-host">Host / IP Detectado:</label>
+        <input type="text" id="site-host" class="input-field" readonly>
+      </div>
+
+      <button type="submit" class="request-btn glow-btn">Enviar Requisição HTTP</button>
+    </form>
 
     <!-- Linhas de energia -->
     <div class="energy-lines"></div>
   </main>
 
-  <!-- Script único -->
-  <script type="module" src="./scripts/OSI.js"></script>
+  <!-- Script único de entrada -->
+  <script type="module" src="./scripts/application.js"></script>
 </body>
 </html>
