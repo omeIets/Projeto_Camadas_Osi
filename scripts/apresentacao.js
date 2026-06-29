@@ -1,6 +1,7 @@
 import { SignJWT, decodeJwt } from 'https://cdn.jsdelivr.net/npm/jose@6/+esm';
 import { camadaSessao }     from './sessao.js';
 import { camadaTransporte } from './transporte.js';
+import { camadaRede }       from './camada_rede.js';
 import { camadaEnlace }     from './enlace.js';
 import { camadaFisica }     from './fisica.js';
 
@@ -145,11 +146,14 @@ export async function camadaApresentacao(dadosLimpos) {
   // ══ CAMADA DE TRANSPORTE — estrutura do professor ══
   const transporte = camadaTransporte(sessao, dadosLimpos.protocolo);
 
+  // ══ CAMADA DE REDE — entre Transporte e Enlace (ordem OSI correta) ══
+  const rede = camadaRede(transporte, dns);
+
   // ══ CAMADA DE ENLACE ══
   const quadro = camadaEnlace(transporte);
 
   // ══ CAMADA FÍSICA ══
-  const bits = camadaFisica(quadro);
+  const fisica = camadaFisica(quadro);
 
   // Salva tudo para a página de resultado
   localStorage.setItem('dadosCriptografados', JSON.stringify({
@@ -159,8 +163,9 @@ export async function camadaApresentacao(dadosLimpos) {
     dns,
     sessao,
     transporte,
+    rede,
     quadro,
-    bits,
+    fisica,
   }));
 
   window.location.href = 'resultado.html';

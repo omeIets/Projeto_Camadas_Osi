@@ -1,62 +1,87 @@
 /**
- * CAMADA DE ENLACE — Quadro Ethernet
+ * CAMADA DE ENLACE — Quadro Ethernet (especificação do professor)
  *
- * Estrutura do quadro baseada no padrão IEEE 802.3:
- *   macOrigem   - 6 bytes (gerado a partir do sessionId)
- *   macDestino  - 6 bytes (gerado a partir do packetId)
- *   etherType   - 0x0800 = IPv4
- *   dados       - payload encapsulado (objeto de transporte)
- *   tamanho     - tamanho estimado do quadro em bytes
- *   fcs         - Frame Check Sequence (CRC-32 simulado)
+ * Estrutura do frame:
+ * {
+ *   frameId:    "F001",
+ *   macOrigem:  "XX:XX:XX:XX:XX:XX",  // endereço físico simulado da máquina local
+ *   macDestino: "AA:BB:CC:DD:EE:FF",  // MAC fictício do roteador/switch receptor
+ *   tipo:       "IPv4",
+ *   crc:        "AB1234...",           // MD5 do JSON.stringify dos dados
+ *   dados:      { ... }               // payload encapsulado (objeto do transporte)
+ * }
+ *
+ * Nota: Browsers não expõem o MAC real do dispositivo por razões de segurança/privacidade.
+ * Simulamos um MAC localmente administrado (bit U/L = 1) gerado uma vez e persistido
+ * no localStorage, representando o endereço físico fixo desta máquina na simulação.
  */
 
-/**
- * Deriva um endereço MAC de 6 bytes a partir de uma string UUID.
- * Usa os primeiros 12 hex chars do UUID, ajustando o bit U/L.
- */
-function uuidParaMAC(uuid) {
-  const hex = uuid.replace(/-/g, '').slice(0, 12).toUpperCase();
-  const bytes = hex.match(/.{2}/g);
-  // Bit 1 do primeiro byte = 0 → MAC unicast (administrado localmente)
-  const primeiroByte = (parseInt(bytes[0], 16) & 0xFE).toString(16).padStart(2, '0').toUpperCase();
-  bytes[0] = primeiroByte;
+import md5 from 'https://esm.sh/md5@2';
+
+// ─── Contador de frames ───────────────────────────────────────────────────────
+let frameCounter = parseInt(sessionStorage.getItem('osi-frame-counter') ?? '0', 10);
+
+function gerarFrameId() {
+  frameCounter++;
+  sessionStorage.setItem('osi-frame-counter', String(frameCounter));
+  return `F${String(frameCounter).padStart(3, '0')}`;
+}
+
+// ─── MAC Origem — simulado e persistido (representa este dispositivo) ─────────
+function obterMacOrigem() {
+  const salvo = localStorage.getItem('osi-mac-origem');
+  if (salvo) return salvo;
+
+  // Gera MAC aleatório de 6 bytes — localmente administrado (bit U/L = 1, bit I/G = 0)
+  const bytes = Array.from(crypto.getRandomValues(new Uint8Array(6)));
+  bytes[0] = (bytes[0] & 0xFE) | 0x02;   // unicast + locally administered
+  const mac = bytes.map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(':');
+  localStorage.setItem('osi-mac-origem', mac);
+  console.log('[Enlace] MAC Origem gerado e persistido:', mac);
+  return mac;
+}
+
+// ─── MAC Destino — endereço fictício do roteador/switch receptor ──────────────
+function gerarMacDestino(semente) {
+  // Derivado deterministicamente do packetId para ser rastreável
+  const hex   = semente.replace(/-/g, '').slice(0, 12).toUpperCase();
+  const bytes = hex.match(/.{2}/g) ?? [];
+  // Garante que é unicast + locally administered
+  bytes[0] = ((parseInt(bytes[0], 16) & 0xFE) | 0x02)
+    .toString(16).padStart(2, '0').toUpperCase();
   return bytes.join(':');
 }
 
-/**
- * Gera um FCS (Frame Check Sequence) simulado de 32 bits.
- * Representa o CRC-32 do quadro Ethernet.
- */
-function gerarFCS(dados) {
-  const str = JSON.stringify(dados);
-  let crc   = 0xFFFFFFFF;
-  for (let i = 0; i < str.length; i++) {
-    crc ^= str.charCodeAt(i);
-    for (let j = 0; j < 8; j++) {
-      crc = crc & 1 ? (crc >>> 1) ^ 0xEDB88320 : crc >>> 1;
-    }
-  }
-  return ((crc ^ 0xFFFFFFFF) >>> 0).toString(16).toUpperCase().padStart(8, '0');
-}
+// ─── Camada de Enlace ─────────────────────────────────────────────────────────
 
 export function camadaEnlace(transporte) {
-  // MACs derivados dos IDs únicos da sessão para serem dinâmicos e rastreáveis
-  const macOrigem  = uuidParaMAC(transporte.sessionId);
-  const macDestino = uuidParaMAC(transporte.packetId);
+  console.log('═══ CAMADA DE ENLACE ═══');
 
-  // Tamanho estimado do quadro: header Ethernet (14B) + dados + FCS (4B)
-  const payloadStr    = JSON.stringify(transporte);
-  const tamanhoQuadro = 14 + payloadStr.length + 4;
+  const frameId    = gerarFrameId();
+  const macOrigem  = obterMacOrigem();
+  const macDestino = gerarMacDestino(transporte.packetId);
+  const tipo       = 'IPv4';
+
+  // CRC = MD5 do JSON.stringify do payload — permite verificar integridade na camada física
+  const dadosStr = JSON.stringify(transporte);
+  const crc      = md5(dadosStr).toUpperCase();
 
   const quadro = {
+    frameId,
     macOrigem,
     macDestino,
-    etherType:    '0x0800',          // IPv4
-    dados:        transporte,
-    tamanhoQuadro,                   // em bytes (estimado)
-    fcs:          gerarFCS(transporte), // CRC-32 simulado
+    tipo,
+    crc,
+    dados: transporte,
   };
 
-  console.log('═══ CAMADA DE ENLACE ═══', quadro);
+  console.log('[Enlace] Frame criado:', {
+    frameId,
+    macOrigem,
+    macDestino,
+    tipo,
+    crc,
+  });
+
   return quadro;
 }
